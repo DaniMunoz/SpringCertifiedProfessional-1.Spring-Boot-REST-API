@@ -2,6 +2,7 @@ package example.cashcard;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-
+        /*
+        //Deprecated
         http.authorizeHttpRequests()
                 .requestMatchers("/cashcards/**")
                 //.authenticated()
@@ -25,6 +27,12 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .httpBasic();
+        */
+        http.authorizeHttpRequests((authorizeHttpRequests) ->
+                        authorizeHttpRequests.requestMatchers("/cashcards/**")
+                                .hasRole("CARD-OWNER")
+                ).httpBasic(Customizer.withDefaults());
+        http.csrf((csrf) -> csrf.disable());
 
         return http.build();
     }
